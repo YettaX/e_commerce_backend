@@ -1,0 +1,23 @@
+CREATE TABLE Users
+(
+    user_id      INT AUTO_INCREMENT PRIMARY KEY,
+    username     VARCHAR(50)  NOT NULL UNIQUE,
+    email        VARCHAR(100) NOT NULL UNIQUE,
+    password     VARCHAR(255) NOT NULL,
+    full_name    VARCHAR(100),
+    phone_number VARCHAR(15),
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+CREATE TABLE Products
+(
+    product_id  INT AUTO_INCREMENT PRIMARY KEY,
+    name        VARCHAR(255)   NOT NULL,
+    description TEXT,
+    price       DECIMAL(10, 2) NOT NULL,
+    stock       INT       DEFAULT 0,
+    image_url   VARCHAR(255),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
