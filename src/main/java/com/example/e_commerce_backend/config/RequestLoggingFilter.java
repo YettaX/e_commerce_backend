@@ -28,13 +28,14 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
         ContentCachingRequestWrapper requestWrapper = new ContentCachingRequestWrapper(request);
         ContentCachingResponseWrapper responseWrapper = new ContentCachingResponseWrapper(response);
 
+        try {
+            filterChain.doFilter(requestWrapper, responseWrapper);
+        } finally {
+            logRequestDetails(requestWrapper);
+            logResponseDetails(responseWrapper);
 
-        filterChain.doFilter(requestWrapper, response);
-        logRequestDetails(requestWrapper);
-
-        logResponseDetails(responseWrapper);
-
-        responseWrapper.copyBodyToResponse();
+            responseWrapper.copyBodyToResponse();
+        }
     }
 
 

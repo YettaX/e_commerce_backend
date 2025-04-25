@@ -3,6 +3,7 @@ package com.example.e_commerce_backend.service;
 import com.example.e_commerce_backend.dto.LoginUserDto;
 import com.example.e_commerce_backend.dto.RegisterUserDto;
 import com.example.e_commerce_backend.entities.User;
+import com.example.e_commerce_backend.exception.BusinessException;
 import com.example.e_commerce_backend.repositories.UserRepository;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -35,13 +36,20 @@ public class AuthenticationService {
     }
 
     public User signup(RegisterUserDto registerUserDto) {
-        User user = new User();
-        user.setEmail(registerUserDto.getEmail());
-        user.setFirstName(registerUserDto.getFirstName());
-        user.setLastName(registerUserDto.getLastName());
-        user.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
+        try {
+            User user = new User();
+            user.setEmail(registerUserDto.getEmail());
+            user.setFirstName(registerUserDto.getFirstName());
+            user.setLastName(registerUserDto.getLastName());
+            user.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
 
-        return userRepository.save(user);
+            return userRepository.save(user);
+        } catch (Exception e) {
+            System.out.println("Failed to register user. RegisterDto: " + registerUserDto);
+            throw new BusinessException("Failed to register. Please try again later.");
+
+        }
+
     }
 
     public User authenticate(LoginUserDto loginUserDto) {

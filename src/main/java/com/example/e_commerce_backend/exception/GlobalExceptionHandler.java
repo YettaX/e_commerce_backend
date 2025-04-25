@@ -19,11 +19,16 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({UsernameNotFoundException.class, BadCredentialsException.class})
     public ResponseEntity<?> handleAuthException(RuntimeException runtimeException) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", runtimeException.getMessage()));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Invalid email or password."));
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ResponseEntity<?> handleBusinessException(RuntimeException runtimeException) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", runtimeException.getMessage()));
     }
 
     @ExceptionHandler
     public ResponseEntity<?> handleCommonException(RuntimeException runtimeException) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", runtimeException.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "Internal server error"));
     }
 }

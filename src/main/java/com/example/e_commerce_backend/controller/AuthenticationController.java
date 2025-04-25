@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Map;
+
 /**
  * @author yettaxue
  * @project e_commerce_backend
@@ -31,10 +33,10 @@ public class AuthenticationController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<User> register(@RequestBody RegisterUserDto registerUserDto) {
-        User registerUser = authenticationService.signup(registerUserDto);
+    public ResponseEntity<?> register(@RequestBody RegisterUserDto registerUserDto) {
+        authenticationService.signup(registerUserDto);
 
-        return ResponseEntity.ok(registerUser);
+        return ResponseEntity.ok(Map.of());
     }
 
     @PostMapping("/login")
