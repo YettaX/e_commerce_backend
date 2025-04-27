@@ -20,6 +20,7 @@ public class UserService {
     private UserRepository userRepository;
 
     public UserInfoDto getUserByEmail(String email) {
+        System.out.println("in getUserByEmail service, email: " + email);
         User user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
         UserInfoDto userInfoDto = new UserInfoDto();
         userInfoDto.setEmail(user.getEmail());

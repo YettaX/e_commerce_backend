@@ -26,8 +26,10 @@ public class UserController {
 
     @GetMapping("/account")
     public ResponseEntity<UserInfoDto> getCurrentUser(@AuthenticationPrincipal UserDetails userDetails) {
-       String email = userDetails.getUsername();
-       UserInfoDto userInfoDto = userService.getUserByEmail(email);
-       return ResponseEntity.ok(userInfoDto);
+        System.out.println("in getCurrentUser controller");
+        String email = userDetails.getUsername();
+        System.out.println("email: " + email);
+        UserInfoDto userInfoDto = userService.getUserByEmail(email);
+        return ResponseEntity.ok(userInfoDto);
     }
 }

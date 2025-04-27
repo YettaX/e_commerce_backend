@@ -37,6 +37,9 @@ public class AuthenticationService {
 
     public User signup(RegisterUserDto registerUserDto) {
         try {
+            if (userRepository.findByEmail(registerUserDto.getEmail()).isPresent()) {
+                throw new BusinessException("Email already registered. Please login instead.");
+            }
             User user = new User();
             user.setEmail(registerUserDto.getEmail());
             user.setFirstName(registerUserDto.getFirstName());
@@ -44,7 +47,10 @@ public class AuthenticationService {
             user.setPassword(passwordEncoder.encode(registerUserDto.getPassword()));
 
             return userRepository.save(user);
-        } catch (Exception e) {
+        } catch (BusinessException be) {
+            throw be;
+        }
+        catch (Exception e) {
             System.out.println("Failed to register user. RegisterDto: " + registerUserDto);
             throw new BusinessException("Failed to register. Please try again later.");
 
