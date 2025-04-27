@@ -40,6 +40,7 @@ public class RequestLoggingFilter extends OncePerRequestFilter {
 
 
     private void logRequestDetails(ContentCachingRequestWrapper request) throws IOException{
+
         System.out.println("\n Incoming Request");
         System.out.println("Method: " + request.getMethod());
         System.out.println("URL: " + request.getRequestURI());
