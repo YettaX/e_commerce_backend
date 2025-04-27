@@ -30,7 +30,8 @@ import java.util.List;
 @Entity
 public class User implements UserDetails {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @SequenceGenerator(name = "users_seq", sequenceName = "users_seq", allocationSize = 1)
     @Column(name = "user_id", nullable = false)
     private Integer userId;
 

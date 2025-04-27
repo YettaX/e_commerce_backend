@@ -110,6 +110,34 @@
             <version>7.4</version>
         </dependency>
 
+        <!-- ✅ Spring Boot Starter Test，Includes JUnit5, Mockito, MockMvc, AssertJ.. -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.junit.vintage</groupId>
+                    <artifactId>junit-vintage-engine</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
+        <!-- ✅ H2 Database（用于集成测试时的内存数据库） -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ✅ Spring Security Test（用于测试带认证的接口，比如@WithMockUser） -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+
 
     </dependencies>
 
