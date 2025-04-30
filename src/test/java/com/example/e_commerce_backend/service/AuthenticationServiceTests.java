@@ -1,5 +1,6 @@
 package com.example.e_commerce_backend.service;
 
+import com.example.e_commerce_backend.dto.LoginUserDto;
 import com.example.e_commerce_backend.dto.RegisterUserDto;
 import com.example.e_commerce_backend.entities.User;
 import com.example.e_commerce_backend.exception.BusinessException;
@@ -12,6 +13,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
@@ -20,8 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * @author yettaxue
@@ -69,7 +73,6 @@ public class AuthenticationServiceTests {
             when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
 
-
             // When
             User savedUser = authenticationService.signup(registerUserDto);
 
@@ -98,6 +101,66 @@ public class AuthenticationServiceTests {
             assertThatThrownBy(() -> authenticationService.signup(registerUserDto))
                     .isInstanceOf(BusinessException.class)
                     .hasMessageContaining("Email already registered.");
+
+        }
+    }
+
+    @Nested
+    @DisplayName("Authenticate method tests")
+    class AuthenticateTests {
+
+        @Test
+        @DisplayName("Given an existing loginUser, when authenticate, then return user")
+        void givenExistingLoginUser_whenAuthenticate_thenReturnUser() {
+            // Given
+            LoginUserDto loginUserDto = new LoginUserDto();
+            loginUserDto.setEmail("test@example.com");
+            loginUserDto.setPassword("test1234");
+            when(userRepository.findByEmail("test@example.com")).thenReturn(Optional.of(new User()));
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(mock(Authentication.class));
+
+            // When
+            User user = authenticationService.authenticate(loginUserDto);
+
+            assertThat(user).isNotNull();
+            verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+
+        }
+
+        @Test
+        @DisplayName("Given an non-existing loginUser, when authenticate, then throw the UserNameNotFound exception.")
+        void givenNonExistingLoginUser_whenAuthenticate_ThenThrowUserNameNotFoundException() {
+            // Given
+            LoginUserDto loginUserDto = new LoginUserDto();
+            loginUserDto.setEmail("test@example.com");
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(mock(Authentication.class));
+            when(userRepository.findByEmail(loginUserDto.getEmail())).thenReturn(Optional.empty());
+
+
+            // When + Return
+            assertThatThrownBy(() -> authenticationService.authenticate(loginUserDto))
+                    .isInstanceOf(UsernameNotFoundException.class)
+                    .hasMessageContaining("Failed to find user");
+            verify(authenticationManager).authenticate(any(UsernamePasswordAuthenticationToken.class));
+            verify(userRepository).findByEmail(loginUserDto.getEmail());
+
+        }
+
+        @Test
+        @DisplayName("Given an non-existing loginUser, when authenticate, then throw the BadCredentialsException exception.")
+        void givenNonExistingLoginUser_whenAuthenticate_ThenThrowBadCredentialsException() {
+            // Given
+            LoginUserDto loginUserDto = new LoginUserDto();
+            loginUserDto.setEmail("test@example.com");
+
+            when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
+                    .thenThrow(BadCredentialsException.class);
+
+            // When + Return
+            assertThatThrownBy(() -> authenticationService.authenticate(loginUserDto))
+                    .isInstanceOf(BadCredentialsException.class);
+
+            verify(userRepository, never()).findByEmail(loginUserDto.getEmail());
 
         }
     }
